@@ -7,6 +7,8 @@ class CustomUser(AbstractUser):
     phone_num = models.CharField(max_length=15, unique=True, null=True)
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     email = models.EmailField(blank=True, null=True, unique=True)
+    name = models.CharField(max_length=15, unique=False, null=False)
+    birth_date = models.DateField(null=False, blank=True)
 
     def clean(self):
         super().clean()

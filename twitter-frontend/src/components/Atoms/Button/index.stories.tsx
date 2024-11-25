@@ -12,17 +12,19 @@ const Template: StoryFn<typeof Button> = (args) => <Button {...args} />;
 export const BlueButton = Template.bind({});
 BlueButton.args = {
   text: "This is a blue button",
-  backgroundColor: "rgba(96, 165, 250, 1)",
+  btnColor: "blue",
   borderColor: "transparent",
   textColor: "rgba(255, 255, 255, 1)",
   isBold: true,
+  isDeactive: true,
 };
 
 // 白色用
 export const WhiteButton = Template.bind({});
 WhiteButton.args = {
   text: "This is a white",
-  backgroundColor: "rgba(255, 255, 255, 1)",
+  btnColor: "white",
   borderColor: "rgba(229, 231, 235, 1)",
   isBold: false,
+  isDeactive: true,
 };

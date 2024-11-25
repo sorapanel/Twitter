@@ -1,4 +1,4 @@
-export type ShapeImageSize = "sm" | "md";
+export type ShapeImageSize = "sm" | "md" | "lg";
 
 export type ShapeImageProps = {
   imgPath: string;
@@ -12,7 +12,7 @@ const ShapeImage = ({ imgPath, imgSize = "sm" }: ShapeImageProps) => {
       alt="ShapeImage"
       className={`rounded-full ${imgSize === "sm" ? "w-8 h-8" : ""} ${
         imgSize === "md" ? "w-24 h-24" : ""
-      }`}
+      } ${imgSize === "lg" && "w-28 h-28"}`}
     />
   );
 };

@@ -8,7 +8,9 @@ export default {
 
 export const Standard = () => (
   <>
-    <Separator>or</Separator>
+    <Separator>
+      <pre>&#009;or&#009;</pre>
+    </Separator>
     <Separator>and</Separator>
     <Separator />
   </>

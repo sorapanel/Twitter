@@ -15,3 +15,6 @@ Sm.args = { imgPath: imgPath };
 
 export const Md = Template.bind({});
 Md.args = { imgPath: imgPath, imgSize: "md" };
+
+export const Lg = Template.bind({});
+Lg.args = { imgPath: imgPath, imgSize: "lg" };

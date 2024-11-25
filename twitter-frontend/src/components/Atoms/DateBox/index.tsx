@@ -8,6 +8,7 @@ export type DateBoxProps = {
   hasError?: boolean;
   onClick?: () => void;
   onChange?: (value: string) => void;
+  handleData?: (data: string, isEmpty: boolean, value: string) => void;
 };
 
 const DateBox = ({
@@ -15,9 +16,12 @@ const DateBox = ({
   hasError = false,
   onClick,
   onChange,
+  handleData,
 }: DateBoxProps) => {
   const [isClick, setIsClick] = useState(false);
+  const [value, setValue] = useState(""); //インプットデータ用
   const rootRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   let month: string[] = [];
   let day: string[] = [];
   let year: string[] = [];
@@ -43,6 +47,15 @@ const DateBox = ({
     onClick && onClick();
   };
 
+  const handleClickValue = (data: string) => {
+    setValue(data);
+    if (inputRef.current) {
+      inputRef.current.value = data;
+    }
+
+    handleData && handleData(label, false, data);
+  };
+
   const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
     //テキストボックス以外をクリックしたときにisClickをfalse
     if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
@@ -64,9 +77,9 @@ const DateBox = ({
       <div
         ref={rootRef}
         onClick={handleClick}
-        className={`relative h-12 ${label === "月" ? "w-48" : ""} ${
-          label === "日" ? "w-24" : ""
-        } ${label === "年" ? "w-32" : ""} rounded border focus:outline-none ${
+        className={`relative h-12 ${label === "月" ? "w-44" : ""} ${
+          label === "日" ? "w-20" : ""
+        } ${label === "年" ? "w-28" : ""} rounded border focus:outline-none ${
           isClick ? "border-blue-400" : "border-gray-200 "
         } ${hasError ? "!border-red-600" : ""}`}
       >
@@ -77,6 +90,7 @@ const DateBox = ({
         >
           {label}
         </p>
+        <p className="absolute top-6">{value}</p>
         <div className="absolute right-0 top-2">
           <ExpandMoreIcon
             color={`${isClick ? "primary" : "disabled"}`}
@@ -94,16 +108,10 @@ const DateBox = ({
                   className={
                     " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
                   }
+                  onClick={() => handleClickValue(m)}
                 >
                   {m}
                 </p>
-                {/* ダミーインプット */}
-                <input
-                  type="hidden"
-                  name={label}
-                  value={m}
-                  onChange={() => onChange && onChange(m)}
-                />
               </>
             ))}
           </div>
@@ -119,16 +127,10 @@ const DateBox = ({
                   className={
                     " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
                   }
+                  onClick={() => handleClickValue(d)}
                 >
                   {d}
                 </p>
-                {/* ダミーインプット */}
-                <input
-                  type="hidden"
-                  name={label}
-                  value={d}
-                  onChange={() => onChange && onChange(d)}
-                />
               </>
             ))}
           </div>
@@ -144,20 +146,16 @@ const DateBox = ({
                   className={
                     " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
                   }
+                  onClick={() => handleClickValue(y)}
                 >
                   {y}
                 </p>
-                {/* ダミーインプット */}
-                <input
-                  type="hidden"
-                  name={label}
-                  value={y}
-                  onChange={() => onChange && onChange(y)}
-                />
               </>
             ))}
           </div>
         )}
+        {/* ダミーインプット */}
+        <input type="hidden" name={label} ref={inputRef} />
       </div>
     </>
   );
