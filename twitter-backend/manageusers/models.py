@@ -4,11 +4,11 @@ from django.core.exceptions import ValidationError
 
 # Create your models here.
 class CustomUser(AbstractUser):
-    phone_num = models.CharField(max_length=15, unique=True, null=True)
+    phone_num = models.CharField(max_length=15, unique=False, null=True, blank=True)
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-    email = models.EmailField(blank=True, null=True, unique=True)
+    email = models.CharField(max_length=100, unique=False, null=True, blank=True)
     name = models.CharField(max_length=15, unique=False, null=False)
-    birth_date = models.DateField(null=False, blank=True)
+    birth_date = models.CharField(max_length=15, unique=False, null=False)
 
     def clean(self):
         super().clean()

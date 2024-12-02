@@ -10,6 +10,7 @@ export type ButtonProps = {
   isBold: boolean;
   onClick?: () => void;
   isDeactive?: boolean;
+  type?: boolean;
 };
 
 const Button = ({
@@ -21,10 +22,12 @@ const Button = ({
   textColor,
   onClick,
   isDeactive = false,
+  type,
 }: ButtonProps) => {
   return (
     <>
       <button
+        type={type ? "submit" : undefined}
         disabled={isDeactive}
         style={{
           borderColor,

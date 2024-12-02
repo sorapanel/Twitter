@@ -102,17 +102,16 @@ const DateBox = ({
             className="absolute w-full border border-2 rounded"
             style={{ top: "-18.5rem" }}
           >
-            {month.map((m) => (
-              <>
-                <p
-                  className={
-                    " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
-                  }
-                  onClick={() => handleClickValue(m)}
-                >
-                  {m}
-                </p>
-              </>
+            {month.map((m, i) => (
+              <p
+                key={i}
+                className={
+                  " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
+                }
+                onClick={() => handleClickValue(m)}
+              >
+                {m}
+              </p>
             ))}
           </div>
         )}
@@ -121,17 +120,16 @@ const DateBox = ({
             className="absolute w-full overflow-y-auto border border-2 rounded"
             style={{ maxHeight: "29rem", top: "-28.3rem" }}
           >
-            {day.map((d) => (
-              <>
-                <p
-                  className={
-                    " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
-                  }
-                  onClick={() => handleClickValue(d)}
-                >
-                  {d}
-                </p>
-              </>
+            {day.map((d, i) => (
+              <p
+                key={i}
+                className={
+                  " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
+                }
+                onClick={() => handleClickValue(d)}
+              >
+                {d}
+              </p>
             ))}
           </div>
         )}
@@ -140,17 +138,16 @@ const DateBox = ({
             className="absolute w-full overflow-y-auto border border-2 rounded"
             style={{ maxHeight: "29rem", top: "-28.3rem" }}
           >
-            {year.map((y) => (
-              <>
-                <p
-                  className={
-                    " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
-                  }
-                  onClick={() => handleClickValue(y)}
-                >
-                  {y}
-                </p>
-              </>
+            {year.map((y, i) => (
+              <p
+                key={i}
+                className={
+                  " z-50 border text-gray-400 bg-white hover:bg-blue-400 hover:border-blue-400 hover:text-white"
+                }
+                onClick={() => handleClickValue(y)}
+              >
+                {y}
+              </p>
             ))}
           </div>
         )}

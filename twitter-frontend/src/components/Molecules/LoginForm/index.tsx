@@ -18,7 +18,7 @@ type LoginRootProps = {
 const LoginRoot = ({ children }: LoginRootProps) => {
   return (
     <div
-      className={"relative border border-gray-100 rounded-xl z-50"}
+      className={"relative border border-gray-100 rounded-xl z-50 bg-white"}
       style={{ width: "37rem", height: "40.3rem" }}
     >
       {children}
@@ -26,9 +26,16 @@ const LoginRoot = ({ children }: LoginRootProps) => {
   );
 };
 
-const ProcessedCloseIcon = () => {
+type ProccessedCloseIconProps = {
+  onClick?: () => void;
+};
+
+const ProcessedCloseIcon = ({ onClick }: ProccessedCloseIconProps) => {
   return (
-    <div className="absolute top-3 left-3">
+    <div
+      className="absolute top-3 sm:left-3 left-16 hover:rounded-full hover:bg-black hover:bg-opacity-30"
+      onClick={onClick}
+    >
       <CloseIcon color="disabled" />
     </div>
   );
@@ -109,7 +116,7 @@ const NotFoundAccount = ({ text }: NotFoundAccountProps) => {
   return (
     <>
       <div className="flex justify-center z-50">
-        <div className="mt-40  px-2 py-3 w-60 rounded bg-blue-400">
+        <div className="sm:mt-40 mt-10 px-2 py-3 w-60 rounded bg-blue-400">
           <p className="text-white text-center">{text}</p>
         </div>
       </div>
@@ -261,7 +268,12 @@ const LoginPage2 = ({
   );
 };
 
-const Login = () => {
+type LoginProps = {
+  onClick?: () => void;
+  handleLogin?: (id: number | string) => void;
+};
+
+const Login = ({ onClick, handleLogin }: LoginProps) => {
   //フォームの表示変更に対するフラグ
   const [isNext, setIsNext] = useState(0);
   //パスワード画面にてloginForm1で入力したテキストを表示する用
@@ -289,14 +301,13 @@ const Login = () => {
         passwordRef.current.value = value;
       }
       if (formRef.current) {
-        if (
-          await passwordCorrect(
-            loginInfoRef.current?.value,
-            passwordRef.current?.value
-          )
-        ) {
+        const loginuser = await passwordCorrect(
+          loginInfoRef.current?.value,
+          passwordRef.current?.value
+        );
+        if (loginuser !== null) {
           setCorrectPassword(true);
-          formRef.current.submit;
+          handleLogin && handleLogin(loginuser.id);
         } else {
           setCorrectPassword(false);
         }
@@ -314,7 +325,7 @@ const Login = () => {
     <>
       <LoginRoot>
         {/* ×アイコン */}
-        <ProcessedCloseIcon />
+        <ProcessedCloseIcon onClick={onClick} />
         {/* Twitterロゴ */}
         <ProcessedTwitterIcon />
         {/* LoginPage1 */}

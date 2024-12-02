@@ -17,6 +17,8 @@
     "@fontsource/material-icons": "^5.1.0",
     "@mui/icons-material": "^6.1.8",
     "@mui/material": "^6.1.8",
+    "crypto-js": "^4.2.0",
+    "js-cookie": "^3.0.5",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106"
@@ -30,6 +32,7 @@
     "@storybook/nextjs": "^8.4.4",
     "@storybook/react": "^8.4.4",
     "@storybook/test": "^8.4.4",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

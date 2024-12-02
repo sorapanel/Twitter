@@ -6,33 +6,28 @@ import DateBox from "@/components/Atoms/DateBox";
 import Button from "@/components/Atoms/Button";
 import ShapeImage from "@/components/Atoms/ShapeImage";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { usernameExist } from "@/common/api/manage_user";
+import { usernameExist, createUser } from "@/common/api/manage_user";
+import { useRouter } from "next/router";
 
-const SignupForm = () => {
+type SignupFormProps = {
+  onClick?: () => void;
+  handleSignup?: () => void;
+};
+
+const SignupForm = ({ onClick, handleSignup }: SignupFormProps) => {
   //電話番号とメールの入力切替を管理
-  const [isPhoneNum, setIsPhoneNum] = useState(true);
+  const [isPhoneNum, setIsPhoneNum] = useState("");
+  const [isEmail, setIsEmail] = useState("");
   //それぞれのフォームの入力状態を管理
   //すべて（電話番号とメールはどちらか）を入力しないと次へは進めない
-  const [isName, setIsName] = useState(false);
-  const [isPhoneNumOrEmail, setIsPhoneNumOrEmail] = useState(false);
-  const [isMonth, setIsMonth] = useState(false);
-  const [isDay, setIsDay] = useState(false);
-  const [isYear, setIsYear] = useState(false);
-  const [isPassword, setIsPassword] = useState(false);
-  const [isUsername, setIsUsername] = useState(false);
-
-  //ダミーインプット管理用
-  const nameRef = useRef<HTMLInputElement>(null);
-  const phoneNumRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const monthRef = useRef<HTMLInputElement>(null);
-  const dayRef = useRef<HTMLInputElement>(null);
-  const yearRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const usernameRef = useRef<HTMLInputElement>(null);
-  //ダミーフォーム送信用
-  const formRef = useRef<HTMLFormElement>(null);
+  const [isName, setIsName] = useState("");
+  const [isPhoneNumOrEmail, setIsPhoneNumOrEmail] = useState(true);
+  const [isMonth, setIsMonth] = useState("");
+  const [isDay, setIsDay] = useState("");
+  const [isYear, setIsYear] = useState("");
+  const [isPassword, setIsPassword] = useState("");
+  const [isUsername, setIsUsername] = useState("");
+  const [isProfile, setIsProfile] = useState<File | null>(null);
 
   //次へボタンが押された？
   const [isNext, setIsNext] = useState(false);
@@ -42,6 +37,9 @@ const SignupForm = () => {
   const [isPhoto, setIsPhoto] = useState(false);
   //プロフィール画像設定完了（何もしない場合デフォルト画像）判定用
   const [isSetProfileImage, setIsSetProfileImage] = useState(false);
+
+  //ダミーインプット用
+  const fileRef = useRef<HTMLInputElement>(null);
 
   //バリデーションエラーでないか？
   const [hasErrorPhone, setHasErrorPhone] = useState(false);
@@ -54,8 +52,11 @@ const SignupForm = () => {
 
   //電話番号とメールを切り替える
   const handlePhoneNumOrEmail = () => {
-    setIsPhoneNum(!isPhoneNum);
-    setIsPhoneNumOrEmail(false);
+    setIsPhoneNumOrEmail(!isPhoneNumOrEmail);
+    setHasErrorEmail(false)
+    setHasErrorPhone(false)
+    setIsEmail("");
+    setIsPhoneNum("");
   };
 
   //次へボタンが押された時の処理
@@ -71,49 +72,34 @@ const SignupForm = () => {
   //定義された項目への状態変数に値入力
   const handleData = (data: string, isEmpty: boolean, value?: string) => {
     if (data === "名前") {
-      setIsName(!isEmpty);
-      if (nameRef.current && !!value) {
-        nameRef.current.value = value;
-      }
+      value && setIsName(value);
     } else if (data === "電話番号" || data === "メール") {
-      setIsPhoneNumOrEmail(!isEmpty);
       if (data === "電話番号") {
-        if (phoneNumRef.current && !!value) {
+        if (!!value) {
           validation_phoneNumber(value);
-          phoneNumRef.current.value = value;
+          setIsPhoneNum(value);
         }
       } else {
-        if (emailRef.current && !!value) {
+        if (!!value) {
           validation_email(value);
-          emailRef.current.value = value;
+          setIsEmail(value);
         }
       }
     } else if (data === "月") {
-      setIsMonth(!isEmpty);
-      if (monthRef.current && !!value) {
-        monthRef.current.value = value;
-      }
+      value && setIsMonth(value);
     } else if (data === "日") {
-      setIsDay(!isEmpty);
-      if (dayRef.current && !!value) {
-        dayRef.current.value = value;
-      }
+      value && setIsDay(value);
     } else if (data === "年") {
-      setIsYear(!isEmpty);
-      if (yearRef.current && !!value) {
-        yearRef.current.value = value;
-      }
+      value && setIsYear(value);
     } else if (data === "パスワード") {
-      setIsPassword(!isEmpty);
-      if (passwordRef.current && !!value) {
+      if (!!value) {
         validation_password(value);
-        passwordRef.current.value = value;
+        setIsPassword(value);
       }
     } else if (data == "ユーザー名") {
-      setIsUsername(!isEmpty);
-      if (usernameRef.current && !!value) {
+      if (!!value) {
         validation_username(value);
-        usernameRef.current.value = value;
+        setIsUsername(value);
       }
     }
   };
@@ -179,6 +165,7 @@ const SignupForm = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
+      setIsProfile(file);
       setShapeImageURL(URL.createObjectURL(file));
     }
   };
@@ -199,19 +186,41 @@ const SignupForm = () => {
     setIsSetProfileImage(!isSetProfileImage);
   };
 
-  //サインアップ処理
-  const handleSignup = () => {
-    formRef.current?.submit;
+  //提出後処理
+  const handleSubmit = async () => {
+    try {
+      const createdAccount = await createUser(
+        isUsername,
+        isName,
+        isEmail,
+        isPhoneNum,
+        isProfile,
+        isPassword,
+        isMonth,
+        isDay,
+        isYear
+      );
+    } catch (error) {
+      console.error("error:", error);
+      alert("アカウント作成中にエラーが発生しました。もう一度やり直してください。");
+    }
+
+    handleSignup && handleSignup();
   };
 
   return (
     <>
       <div
-        className={"relative border border-gray-100 rounded-xl z-50"}
+        className={
+          "relative border border-gray-100 rounded-xl z-50 bg-white w-9 w-10"
+        }
         style={{ width: "37rem", height: "40.3rem" }}
       >
         {/* ×アイコン */}
-        <div className="absolute top-3 left-3">
+        <div
+          className="absolute top-3 sm:left-3 left-16 hover:rounded-full hover:bg-black hover:bg-opacity-30"
+          onClick={onClick}
+        >
           <CloseIcon color="disabled" />
         </div>
         {/* Twitterロゴ */}
@@ -274,15 +283,17 @@ const SignupForm = () => {
                 <div className="flex flex-col items-center">
                   <div style={{ paddingTop: "16.8rem" }}>
                     {isUsername && !hasErrorUsername && (
-                      <Button
-                        size="lg"
-                        text="登録する"
-                        btnColor="white"
-                        isBold={true}
-                        onClick={handleSignup}
-                        borderColor="rgba(229, 231, 235, 1)"
-                        textColor="rgba(0, 0, 0, 1)"
-                      />
+                      <>
+                        <Button
+                          onClick={handleSubmit}
+                          size="lg"
+                          text="登録する"
+                          btnColor="white"
+                          isBold={true}
+                          borderColor="rgba(229, 231, 235, 1)"
+                          textColor="rgba(0, 0, 0, 1)"
+                        />
+                      </>
                     )}
                     {(!isUsername || hasErrorUsername) && (
                       <Button
@@ -350,6 +361,15 @@ const SignupForm = () => {
                         className="pt-32 relative"
                         onClick={handleFileUpload}
                       >
+                        <input
+                          type="file"
+                          id="profileImg"
+                          name="profileImg"
+                          ref={fileRef}
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                        />
                         <div onClick={handlePhotoClick}>
                           {!!shapeImageURL ? (
                             <ShapeImage imgPath={shapeImageURL} imgSize="lg" />
@@ -406,7 +426,7 @@ const SignupForm = () => {
                 <TextBox placeholder="名前" size="lg" handleData={handleData} />
               </div>
               <div className="mb-4 w-96">
-                {isPhoneNum && (
+                {isPhoneNumOrEmail && (
                   <TextBox
                     placeholder="電話番号"
                     size="lg"
@@ -415,7 +435,7 @@ const SignupForm = () => {
                     hasError={hasErrorPhone}
                   />
                 )}
-                {!isPhoneNum && (
+                {!isPhoneNumOrEmail && (
                   <TextBox
                     placeholder="メール"
                     size="lg"
@@ -427,15 +447,16 @@ const SignupForm = () => {
               </div>
             </div>
             <p
-              className="text-blue-400 hover:underline"
-              style={{ paddingLeft: "14.5rem" }}
+              className="absolute text-blue-400 hover:underline"
+              style={{ right: 102 }}
               onClick={handlePhoneNumOrEmail}
             >
-              かわりにメールアドレスを登録する
+              かわりに{isPhoneNumOrEmail ? "メールアドレス" : "電話番号"}
+              を登録する
             </p>
             <p
               className="font-bold"
-              style={{ paddingLeft: "6.5rem", paddingTop: "1rem" }}
+              style={{ paddingLeft: "6.5rem", paddingTop: "2.54rem" }}
             >
               生年月日
             </p>
@@ -464,7 +485,7 @@ const SignupForm = () => {
             <div className="flex flex-col items-center">
               <div className="mt-24">
                 {isName &&
-                  isPhoneNumOrEmail &&
+                  (isEmail !== "" || isPhoneNum !== "") &&
                   isMonth &&
                   isDay &&
                   isYear &&
@@ -480,15 +501,10 @@ const SignupForm = () => {
                       textColor="rgba(0, 0, 0, 1)"
                     />
                   )}
-                {(!(
-                  isName &&
-                  isPhoneNumOrEmail &&
-                  isMonth &&
-                  isDay &&
-                  isYear
-                ) ||
+                {(!(isName && isMonth && isDay && isYear) ||
                   hasErrorEmail ||
-                  hasErrorPhone) && (
+                  hasErrorPhone ||
+                  (isEmail === "" && isPhoneNum === "")) && (
                   <Button
                     size="lg"
                     text="次へ"
@@ -504,25 +520,6 @@ const SignupForm = () => {
           </>
         )}
       </div>
-      {/* ダミーフォーム */}
-      <form ref={formRef} action="/main" method="POST">
-        <input type="hidden" name="name" ref={nameRef} />
-        <input type="hidden" name="phonenum" ref={phoneNumRef} />
-        <input type="hidden" name="email" ref={emailRef} />
-        <input type="hidden" name="month" ref={monthRef} />
-        <input type="hidden" name="day" ref={dayRef} />
-        <input type="hidden" name="year" ref={yearRef} />
-        <input type="hidden" name="password" ref={passwordRef} />
-        <input
-          type="file"
-          name="profileImg"
-          ref={fileRef}
-          className="hidden"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <input type="hidden" name="username" ref={usernameRef} />
-      </form>
     </>
   );
 };
