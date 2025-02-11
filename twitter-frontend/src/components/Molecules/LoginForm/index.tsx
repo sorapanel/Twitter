@@ -148,7 +148,11 @@ const LoginPage1 = ({ handleNext, handleData }: LoginPage1Props) => {
         setIsEmpty(true);
       }
     } catch (error) {
-      alert(error);
+      if (error == "") {
+        alert("エラーが発生しています")
+      } else {
+        alert(error);
+      }      
     }
   };
 

@@ -1,4 +1,4 @@
-const originUrl = new URL("http://127.0.0.1:8000/api/manage_user/");
+const originUrl = new URL("http://backend.local/api/manage_user/");
 
 //すべてのユーザー取得
 export const getUser = () => {
@@ -151,7 +151,9 @@ export const createUser = (
   formData.append("name", name);
   formData.append("email", email);
   formData.append("phone_num", phone_num);
-  formData.append("profile_image", profile_image);
+  if (profile_image instanceof File) {
+    formData.append("profile_image", profile_image);
+  }
   formData.append("password", encryptedPassword);
   formData.append("birth_date", date);
 
