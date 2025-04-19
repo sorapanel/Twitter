@@ -1,3 +1,6 @@
+>[!NOTE]
+>更新履歴
+>2024/11 Twitterサインアップ、サインイン機能作成完了
 # title:  
 twitter  
 # description:  
