@@ -1,4 +1,5 @@
-# title:twitter  
+# title:  
+twitter  
 # description:  
 このプロジェクトはX(旧Twitter)の模倣です。  
 目的としては模倣することで自分のプログラミングスキルの向上です。  
