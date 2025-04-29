@@ -11,7 +11,7 @@ twitter
 バックエンド：Django  
 その他：Docker,k8s  
 # Demo:  
-(https://drive.google.com/file/d/1JtZliPSc19sytlM01GAmye_A-jIjpGjG/view)  
+https://drive.google.com/file/d/1JtZliPSc19sytlM01GAmye_A-jIjpGjG/view  
 # How to execute:  
 ## frontend:  
 ・「twitter-frontend」ディレクトリへ移動  
